@@ -1,0 +1,13 @@
+.table {
+  width: 1000px;
+
+  &_inner {
+    margin: 20px;
+  }
+
+  .ant-table-expanded-row {
+    .ant-table-cell {
+      background-color: #e1e1e1;
+    }
+  }
+}

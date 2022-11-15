@@ -1,17 +1,20 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Switch, Table } from "antd";
-import { CheckboxChangeEvent } from "antd/es/checkbox";
+import { Button, Switch, Table } from "antd";
 
 import "./TableComponent.scss";
 
-import { DataSourceI } from "../../types";
+import { DataSourceI } from "types";
+
+import ArrowUp from "components/ArrowUp";
+import ArrowDown from "components/ArrowDown";
+import CheckBox from "components/CheckBox";
 
 const { Column } = Table;
 
 const dataSource = [
   {
     key: "1",
-    name: "Wemakefab",
+    name: "WeMakeItSafer",
     segment: "Информационные технологии",
     confirmed: false,
     accreditation: true,
@@ -21,7 +24,16 @@ const dataSource = [
     subData: [
       {
         key: "1",
-        organization: "Wemakefab",
+        organization: "WeMakeItSafer",
+        segment: "Информационные технологии",
+        subConfirmed: true,
+        subAccreditation: true,
+        date: new Date().toDateString(),
+        subBlocked: false,
+      },
+      {
+        key: "2",
+        organization: "WeMakeItSafer",
         segment: "Информационные технологии",
         subConfirmed: true,
         subAccreditation: true,
@@ -53,44 +65,110 @@ const dataSource = [
   },
 ];
 
+const columns = (role: string) => [
+  {
+    title: "Партнер",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "Сегмент",
+    dataIndex: "segment",
+    key: "segment",
+  },
+  {
+    title: "Подтверждён",
+    dataIndex: "confirmed",
+    key: "confirmed",
+    render: (value: boolean) => (
+      <CheckBox check={value} disabled={role === "moderator"} />
+    ),
+  },
+  {
+    title: "Аккредитован",
+    dataIndex: "accreditation",
+    key: "accreditation",
+    render: (value: boolean) => (
+      <CheckBox check={value} disabled={role === "moderator"} />
+    ),
+  },
+  {
+    title: "Дата включения в сеть",
+    dataIndex: "date",
+    key: "date",
+  },
+  {
+    title: "Заблокирован",
+    dataIndex: "blocked",
+    key: "blocked",
+    render: (value: boolean) => (
+      <CheckBox check={value} disabled={role === "moderator"} />
+    ),
+  },
+  {
+    title: "Контакты",
+    dataIndex: "contact",
+    key: "contact",
+  },
+];
+
+const subColumns = (role: string) => [
+  {
+    title: "Организация",
+    dataIndex: "organization",
+    key: "organization",
+  },
+  {
+    title: "Сегмент",
+    dataIndex: "segment",
+    key: "Сегмент",
+  },
+  {
+    title: "Подтвержден",
+    dataIndex: "subConfirmed",
+    key: "subConfirmed",
+    render: (value: boolean) => (
+      <CheckBox check={value} disabled={role === "moderator"} />
+    ),
+  },
+  {
+    title: "Аккредитован",
+    dataIndex: "subAccreditation",
+    key: "subAccreditation",
+    render: (value: boolean) => (
+      <CheckBox check={value} disabled={role === "moderator"} />
+    ),
+  },
+  {
+    title: "Дата включения в сеть",
+    dataIndex: "date",
+    key: "date",
+  },
+  {
+    title: "Заблокирован",
+    dataIndex: "subBlocked",
+    key: "subBlocked",
+    render: (value: boolean) => (
+      <CheckBox check={value} disabled={role === "moderator"} />
+    ),
+  },
+];
+
 const TableComponents = () => {
   const [data, setData] = useState<DataSourceI[]>(dataSource);
   const [count, setCount] = useState(3);
   const [role, setRole] = useState<"moderator" | "admin">("admin");
 
-  const handleClickCheckbox = (
-    event: CheckboxChangeEvent,
-    rowIndex: number,
-    columnKey: string
-  ) => {
-    const newCheckboxState: any = [...data];
-    newCheckboxState[rowIndex][columnKey] = event.target.checked;
-    setData(newCheckboxState);
-  };
-
-  const handleClickCheckboxSub = (
-    event: CheckboxChangeEvent,
-    record: DataSourceI,
-    rowIndex: number,
-    columnKey: string
-  ) => {
-    const newCheckboxState: any = [...data];
-    newCheckboxState[Number(record.key) - 1].subData[rowIndex][columnKey] =
-      event.target.checked;
-    setData(newCheckboxState);
-  };
-
   const handleChangeSwitch = (value: boolean) => {
     setRole(value ? "admin" : "moderator");
   };
 
-  const handleAdd = () => {
-    console.log(dataSource[0]);
+  const handleAddPartner = () => {
     setData([
       ...data,
       {
         key: `${count}`,
-        name: `Wemakefab ${count}`,
+        name: `WeMakeItSafer ${count}`,
         segment: "Информационные технологии",
         confirmed: false,
         accreditation: true,
@@ -100,7 +178,7 @@ const TableComponents = () => {
         subData: [
           {
             key: `${count}`,
-            organization: `Wemakefab ${count}`,
+            organization: `WeMakeItSafer ${count}`,
             segment: `Информационные технологии ${count}`,
             subConfirmed: true,
             subAccreditation: true,
@@ -113,132 +191,8 @@ const TableComponents = () => {
     setCount((prevState) => prevState + 1);
   };
 
-  console.log(data);
-  const columns = [
-    {
-      title: "Партнер",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Сегмент",
-      dataIndex: "segment",
-      key: "segment",
-    },
-    {
-      title: "Подтверждён",
-      dataIndex: "confirmed",
-      key: "confirmed",
-      render: (value: boolean, record: DataSourceI, rowIndex: number) => (
-        <Checkbox
-          checked={value}
-          disabled={role !== "admin"}
-          onChange={(event) =>
-            handleClickCheckbox(event, rowIndex, "confirmed")
-          }
-        />
-      ),
-    },
-    {
-      title: "Аккредитован",
-      dataIndex: "accreditation",
-      key: "accreditation",
-      render: (value: boolean, record: DataSourceI, rowIndex: number) => (
-        <Checkbox
-          checked={value}
-          disabled={role !== "admin"}
-          onChange={(event) =>
-            handleClickCheckbox(event, rowIndex, "accreditation")
-          }
-        />
-      ),
-    },
-    {
-      title: "Дата включения в сеть",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Заблокирован",
-      dataIndex: "blocked",
-      key: "blocked",
-      render: (value: boolean, record: DataSourceI, rowIndex: number) => (
-        <Checkbox
-          checked={value}
-          disabled={role !== "admin"}
-          onChange={(event) => handleClickCheckbox(event, rowIndex, "blocked")}
-        />
-      ),
-    },
-    {
-      title: "Контакты",
-      dataIndex: "contact",
-      key: "contact",
-    },
-  ];
-
-  const subColumns = [
-    {
-      title: "Организация",
-      dataIndex: "organization",
-      key: "organization",
-    },
-    {
-      title: "Сегмент",
-      dataIndex: "segment",
-      key: "Сегмент",
-    },
-    {
-      title: "Подтвержден",
-      dataIndex: "subConfirmed",
-      key: "subConfirmed",
-      render: (value: boolean, record: DataSourceI, rowIndex: number) => (
-        <Checkbox
-          checked={value}
-          disabled={role !== "admin"}
-          onChange={(event) =>
-            handleClickCheckboxSub(event, record, rowIndex, "subConfirmed")
-          }
-        />
-      ),
-    },
-    {
-      title: "Аккредитован",
-      dataIndex: "subAccreditation",
-      key: "subAccreditation",
-      render: (value: boolean, record: DataSourceI, rowIndex: number) => (
-        <Checkbox
-          checked={value}
-          disabled={role !== "admin"}
-          onChange={(event) =>
-            handleClickCheckboxSub(event, record, rowIndex, "subAccreditation")
-          }
-        />
-      ),
-    },
-    {
-      title: "Дата включения в сеть",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Заблокирован",
-      dataIndex: "subBlocked",
-      key: "subBlocked",
-      render: (value: boolean, record: DataSourceI, rowIndex: number) => (
-        <Checkbox
-          checked={value}
-          disabled={role !== "admin"}
-          onChange={(event) =>
-            handleClickCheckboxSub(event, record, rowIndex, "subBlocked")
-          }
-        />
-      ),
-    },
-  ];
-
   return (
-    <div className="table">
+    <div className="main">
       <Switch
         defaultChecked
         onChange={handleChangeSwitch}
@@ -246,6 +200,7 @@ const TableComponents = () => {
       />
       <p>toggle role</p>
       <Table
+        className="table"
         bordered
         dataSource={data}
         pagination={false}
@@ -259,7 +214,7 @@ const TableComponents = () => {
                   pagination={false}
                   className="table_inner"
                 >
-                  {subColumns.map((col) => (
+                  {subColumns(role).map((col) => (
                     <Column
                       title={col.title}
                       dataIndex={col.dataIndex}
@@ -272,9 +227,15 @@ const TableComponents = () => {
             </React.Fragment>
           ),
           rowExpandable: (record) => record.name !== "Not Expandable",
+          expandIcon: ({ expanded, onExpand, record }) =>
+            expanded ? (
+              <ArrowDown onClick={(e: any) => onExpand(record, e)} />
+            ) : (
+              <ArrowUp onClick={(e: any) => onExpand(record, e)} />
+            ),
         }}
       >
-        {columns.map((col) => (
+        {columns(role).map((col) => (
           <Column
             title={col.title}
             dataIndex={col.dataIndex}
@@ -283,12 +244,13 @@ const TableComponents = () => {
           />
         ))}
       </Table>
+      <br />
       <Button
         type="primary"
-        onClick={handleAdd}
+        onClick={handleAddPartner}
         disabled={role === "moderator"}
       >
-        Add
+        Add Partner
       </Button>
     </div>
   );

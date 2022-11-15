@@ -1,13 +1,28 @@
-.table {
-  width: 1000px;
-
-  &_inner {
-    margin: 20px;
+.main {
+  .ant-table-thead {
+    tr {
+      th {
+        background: #fff !important;
+        &:not(:last-child) {
+          border-right: none !important;
+        }
+      }
+    }
   }
 
-  .ant-table-expanded-row {
-    .ant-table-cell {
-      background-color: #e1e1e1;
+  .ant-table .ant-table-bordered {
+    margin: 0 !important;
+  }
+
+  .ant-table-tbody {
+    tr {
+      td {
+        background: #fff !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+        &:not(:last-child) {
+          border-right: none !important;
+        }
+      }
     }
   }
 }
